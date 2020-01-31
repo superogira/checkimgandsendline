@@ -1,4 +1,6 @@
 <?php
+
+//ปรับโซนเวลาเป็นของประเทศไทย
 date_default_timezone_set("Asia/Bangkok");
 $files = scandir("./", SCANDIR_SORT_DESCENDING);
 unset($files[array_search('checkandsend2.php', $files, true)]);
@@ -6,12 +8,14 @@ unset($files[array_search('linenoti.jpg', $files, true)]);
 unset($files[array_search('array.txt', $files, true)]);
 $newest_file = $files[3];
 
-$last_file = file_get_contents('./array.txt', true); //ดึงตัวแปร ไฟล์ล่าสุด จาก txt
-echo "Last - $last_file"; 
+//ดึงตัวแปร ไฟล์ล่าสุด จาก txt มาแสดงผลเทียบกัน 
+$latest_file = file_get_contents('./array.txt', true);
+echo "Last - $latest_file"; 
 echo "<br>";
 echo "Now - $newest_file"; 
 echo "<br>";
 
+//แสดงผลว่าไฟล์ล่าสุดนั้น เป็นไฟล์เมื่อ วัน เวลา เมื่อใด
 $file_date = "./".$newest_file;
 if (file_exists($file_date)) {
     echo "<br>";
@@ -20,10 +24,12 @@ if (file_exists($file_date)) {
     echo "<br>";
 }
 
-if($newest_file == $last_file) {
+//ถ้ายังเป็นไฟล็นเดิมอยู่ก็ให้แสดงผลว่ายังเป็นไฟล์เดิม
+if($newest_file == $latest_file) {
             exit('Still same file.');
 }
 
+//ระบบเดือนภาษาไทยตัวย่อ
 function DateThai($strDate)
 	{
 		$strYear = date("Y",strtotime($strDate))+543;
@@ -40,28 +46,29 @@ function DateThai($strDate)
 $datetime = date("Y-n-j H:i:s", filemtime($file_date));
 $strDate = $datetime;
         
+//เก็บตัวแปรไฟล์ล่าสุดลง txt
 file_put_contents('./array.txt', $newest_file);
 
 $base_url = "http://localhost/test/test/"; //url โฟลเดอร์ที่เก็บไฟล์รูป
 $photo="$base_url$newest_file";
 
-sleep(3);
+sleep(3); //หน่วงเวลา เผื่อรูปเพิ่งถูกเขียนลง Disk เวลาส่งไปภาพจะได้ไม่ดำ
 
 print_r("sending {$photo}");
 
-//The URL of the file that you want to download.
+//Url ของไฟล์รูป
 $url = $photo;
-//Download the file using file_get_contents.
+//Download ไฟล์จาก url
 $downloadedFileContents = file_get_contents($url);
-//Check to see if file_get_contents failed.
+//ตรวจสอบว่า Download ได้สำเร็จไหม
 if($downloadedFileContents === false){
     throw new Exception('Failed to download file at: ' . $url);
 }
-//The path and filename that you want to save the file to.
+//ชื่อไฟล์ที่ต้องการเก็บ
 $fileName = 'linenoti.jpg';
-//Save the data using file_put_contents.
+//เซฟไฟล์
 $save = file_put_contents($fileName, $downloadedFileContents);
-//Check to see if it failed to save or not.
+//ตรวจสอบว่า Save สำเร็จไหม
 if($save === false){
     throw new Exception('Failed to save file to: ' , $fileName);
 }
