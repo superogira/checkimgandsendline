@@ -30,7 +30,7 @@ if (file_exists($file_date)) {
     echo "<br>";
 }
 
-//ถ้ายังเป็นไฟล็นเดิมอยู่ก็ให้แสดงผลว่ายังเป็นไฟล์เดิม
+//ถ้ายังเป็นไฟล็นเดิมอยู่ก็ให้แสดงผลว่ายังเป็นไฟล์เดิม และจบการทำงาน
 if($newest_file == $latest_file) {
             exit('Still same file.');
 }
@@ -49,6 +49,7 @@ function DateThai($strDate)
 		return "$strDay $strMonthThai $strYear เวลา $strHour:$strMinute:$strSeconds";
 	}
 
+//สำหรับส่งวันเวลาเข้าไปใน Line
 $datetime = date("Y-n-j H:i:s", filemtime($file_date));
 $strDate = $datetime;
         
@@ -56,6 +57,8 @@ $strDate = $datetime;
 file_put_contents('./array.txt', $newest_file);
 
 $base_url = "http://localhost/test/"; //url โฟลเดอร์ที่เก็บไฟล์รูป
+
+//เอา Base Url กับชื่อไฟล์มารวมกัน เพื่อไว้ดึงไฟล์
 $photo="$base_url$newest_file";
 
 sleep(3); //หน่วงเวลา เผื่อรูปเพิ่งถูกเขียนลง Disk เวลาส่งไปภาพจะได้ไม่ดำ
