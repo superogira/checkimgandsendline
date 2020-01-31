@@ -2,12 +2,16 @@
 
 //ปรับโซนเวลาเป็นของประเทศไทย
 date_default_timezone_set("Asia/Bangkok");
+
+//Scan ไฟล์ในโฟลเดอร์ที่ไฟล์ php นี้วางอยู่ โดยเรียงจากไฟล์ล่าสุดขึ้นมาก่อน
 $files = scandir("./", SCANDIR_SORT_DESCENDING);
 
-//ไฟล์ที่ไม่ต้องเอาไปรวมในตัวแปร
+//ไฟล์ที่ให้ข้ามไป ไม่ต้องเอาไปรวมในตัวแปร
 unset($files[array_search('checkandsend.php', $files, true)]);
 unset($files[array_search('linenoti.jpg', $files, true)]);
 unset($files[array_search('array.txt', $files, true)]);
+
+//print_r ($files); //ถ้ามันส่งไฟล์ไปไม่ถูกต้อง ให้ลองเปิดบรรทัดนี้ เพื่อ Print ดูค่าลำดับของตัวแปร แล้วเอาไปแก้ตัวเลขใน [] บรรทัดด้างล่าง
 $newest_file = $files[3];
 
 //ดึงตัวแปร ไฟล์ล่าสุด จาก txt มาแสดงผลเทียบกัน 
