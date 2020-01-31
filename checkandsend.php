@@ -49,7 +49,7 @@ $strDate = $datetime;
 //เก็บตัวแปรไฟล์ล่าสุดลง txt
 file_put_contents('./array.txt', $newest_file);
 
-$base_url = "http://localhost/test/test/"; //url โฟลเดอร์ที่เก็บไฟล์รูป
+$base_url = "http://localhost/test/"; //url โฟลเดอร์ที่เก็บไฟล์รูป
 $photo="$base_url$newest_file";
 
 sleep(3); //หน่วงเวลา เผื่อรูปเพิ่งถูกเขียนลง Disk เวลาส่งไปภาพจะได้ไม่ดำ
@@ -75,11 +75,10 @@ if($save === false){
 
 /*-------------line noti----------------------*/
 	$line_api = 'https://notify-api.line.me/api/notify';
-    //$access_token = 'Line Notify Access Token'; //เอา Line Notify Access Token มาใส่ในนี้
-	$access_token = 'yhHwRKfP5QnRZqmom6kyRMFKDWeyyF3rXQjGpCzmHBr'; //Test Token
+	$access_token = 'Line Notify Access Token'; //เอา Line Notify Access Token มาใส่ในนี้
     
 	$message = 'ข้อความที่จะส่งไปพร้อมกับรูปภาพ '.DateThai($strDate); //ข้อความที่จะส่งไปพร้อมกับรูปภาพ + วัน เวลา ของไฟล์รูป
-	$imageFile = new CurlFile('D:\xampp\htdocs\test\test\linenoti.jpg', 'image/jpg', 'linetemp.jpg'); //Windows Path ของไฟล์ linenoti.jpg
+	$imageFile = new CurlFile('D:\xampp\htdocs\test\linenoti.jpg', 'image/jpg', 'linetemp.jpg'); //Windows Path ของไฟล์ linenoti.jpg
 
     $message_data = array(
 	'message' => $message,
