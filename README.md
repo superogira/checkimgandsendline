@@ -21,4 +21,4 @@ echo (%time%) Check and send picture.<br/>
 curl --silent http://localhost/test/checkandsend.php<br/>
 goto restart<br/>
 
-![alt text](https://raw.githubusercontent.com/superogira/checkimgandsendline/master/checkimgandsendline.jpg)
+![alt text](https://raw.githubusercontent.com/superogira/checkimgandsendline/master/checkimgandsendline_readme.jpg)
