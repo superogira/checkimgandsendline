@@ -3,7 +3,9 @@
 //ปรับโซนเวลาเป็นของประเทศไทย
 date_default_timezone_set("Asia/Bangkok");
 $files = scandir("./", SCANDIR_SORT_DESCENDING);
-unset($files[array_search('checkandsend2.php', $files, true)]);
+
+//ไฟล์ที่ไม่ต้องเอาไปรวมในตัวแปร
+unset($files[array_search('checkandsend.php', $files, true)]);
 unset($files[array_search('linenoti.jpg', $files, true)]);
 unset($files[array_search('array.txt', $files, true)]);
 $newest_file = $files[3];
