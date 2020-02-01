@@ -4,7 +4,13 @@
 date_default_timezone_set("Asia/Bangkok");
 
 //Scan ไฟล์ในโฟลเดอร์ที่ไฟล์ php นี้วางอยู่ โดยเรียงจากไฟล์ล่าสุดขึ้นมาก่อน
-$files = scandir("./", SCANDIR_SORT_DESCENDING);
+//$files = scandir("./", SCANDIR_SORT_DESCENDING);
+//^^^ ของเก่าเรียงด้วยชื่อไฟล์ มีปัญหากับชื่อแบบวัน-เดือน-ปี
+//มันจะเรียงของเดือนมกราคมขึ้นก่อนเดือนกุมภาพันธ์ เช่น 31012020 ขึ้นก่อน 01022020 ทำให้มันไม่ส่งรูปใหม่เมื่อขึ้นเดือนใหม่
+
+$dir = "./";
+chdir($dir);
+array_multisort(array_map('filemtime', ($files = glob("*.*"))), SORT_DESC, $files);
 
 //ไฟล์ที่ให้ข้ามไป ไม่ต้องเอาไปรวมในตัวแปร
 unset($files[array_search('checkandsend.php', $files, true)]);
