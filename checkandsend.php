@@ -1,19 +1,19 @@
 <?php
 
 /*--------------------------------------- แก้ไขการตั้งค่าแค่ตรงนี้ ก็ใช้งานได้แล้ว ---------------------------------------*/
-//ไฟล์ checkandsend.php ต้องอยู่ใน Directory เดียวกันกับโฟล์เดอร์ที่เก็บรูป
+//ไฟล์ checkandsend.php ต้องอยู่ใน Directory เดียวกันกับโฟล์เดอร์ที่เก็บรูป (ไม่ใช่ในโฟลเดอร์รูป)
 
 //Windows Path ของที่อยู่ของไฟล์ php
 $win_dir = 'D:\xampp\htdocs\checkimgandsendline';
 
 //Url Directory ที่ไฟล์ php และโฟลเดอร์เก็บรูปอยู่
-$base_url = "http://localhost/checkimgandsendline/"; //url โฟลเดอร์ที่เก็บไฟล์รูป
+$base_url = "http://localhost/checkimgandsendline/";
 
 //ตำแหน่งของ Directory หรือ Folder ที่เก็บรูป 
 $Imagedir = "Images/";
 
 //Line Notify access token สร้างได้ที่ https://notify-bot.line.me/my/
-$linenotifytoken = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
+$linenotifytoken = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
 
 //ข้อความที่จะส่งเข้า Line ไปพร้อมกับรูป
 $strMessage = "ข้อความที่จะส่งไปพร้อมกับรูปภาพ ";
@@ -37,7 +37,7 @@ function DateThai($strDate)
 		return "$strDay $strMonthThai $strYear เวลา $strHour:$strMinute:$strSeconds";
 	}
 
-//ย้ายตำแหน่งไปยังโฟลเดอร์เก็บรูปที่กำหนดไว้ แล้วทำการจัดเรียงไฟล์ที่สร้างหรือเปลี่ยนแปลงล่าสุดขึ้นมาก่อน
+//ย้ายตำแหน่งไปยังโฟลเดอร์เก็บรูปที่กำหนดไว้ แล้วทำการจัดเรียงรายชื่อไฟล์ที่สร้างหรือเปลี่ยนแปลงล่าสุดขึ้นมาก่อน
 chdir($Imagedir);
 array_multisort(array_map('filemtime', ($files = glob("*.*"))), SORT_DESC, $files);
 
@@ -49,6 +49,14 @@ chdir ('../');
 
 //ดึงตัวแปร ไฟล์ล่าสุด จาก txt มาแสดงผลเทียบกับไฟล์ล่าสุด
 $latest_file = file_get_contents('./array.txt', true);
+
+//ตรวจสอบว่า Save สำเร็จไหม
+if($latest_file === false){
+	echo "<br>";
+    echo "ยังไม่มีไฟล์ array.txt เนื่องด้วยเป็นการ Run ครั้งแรก เริ่มทำการตรวจสอบและสร้างไฟล์...";
+	echo "<br>";
+	echo "<br>";
+}
 
 //แสดงผลเปรียบเทียบไฟล์ว่าเปลี่ยนหรือแปลงหรือคงเดิม
 echo "========== เปรียบเทียบไฟล์ =========="; 
