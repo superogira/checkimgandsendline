@@ -53,7 +53,7 @@ $latest_file = file_get_contents('./array.txt', true);
 //ตรวจสอบว่า Save สำเร็จไหม
 if($latest_file === false){
 	echo "<br>";
-    echo "ยังไม่มีไฟล์ array.txt เนื่องด้วยเป็นการ Run ครั้งแรก เริ่มทำการตรวจสอบและสร้างไฟล์...";
+	echo "ยังไม่มีไฟล์ array.txt เนื่องด้วยเป็นการ Run ครั้งแรก เริ่มทำการตรวจสอบและสร้างไฟล์...";
 	echo "<br>";
 	echo "<br>";
 }
