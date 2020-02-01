@@ -1,45 +1,27 @@
 <?php
 
+/*--------------------------------------- แก้ไขการตั้งค่าแค่ตรงนี้ ก็ใช้งานได้แล้ว ---------------------------------------*/
+//ไฟล์ checkandsend.php ต้องอยู่ใน Directory เดียวกันกับโฟล์เดอร์ที่เก็บรูป
+
+//Windows Path ของที่อยู่ของไฟล์ php
+$win_dir = 'D:\xampp\htdocs\checkimgandsendline';
+
+//Url Directory ที่ไฟล์ php และโฟลเดอร์เก็บรูปอยู่
+$base_url = "http://localhost/checkimgandsendline/"; //url โฟลเดอร์ที่เก็บไฟล์รูป
+
+//ตำแหน่งของ Directory หรือ Folder ที่เก็บรูป 
+$Imagedir = "Images/";
+
+//Line Notify access token สร้างได้ที่ https://notify-bot.line.me/my/
+$linenotifytoken = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
+
+//ข้อความที่จะส่งเข้า Line ไปพร้อมกับรูป
+$strMessage = "ข้อความที่จะส่งไปพร้อมกับรูปภาพ ";
+/*--------------------------------------- แก้ไขการตั้งค่าแค่ตรงนี้ ก็ใช้งานได้แล้ว ---------------------------------------*/
+
+
 //ปรับโซนเวลาเป็นของประเทศไทย
 date_default_timezone_set("Asia/Bangkok");
-
-//Scan ไฟล์ในโฟลเดอร์ที่ไฟล์ php นี้วางอยู่ โดยเรียงจากไฟล์ที่สร้างหรือเปลี่ยนแปลงล่าสุดขึ้นมาก่อน
-$dir = "./";
-chdir($dir);
-array_multisort(array_map('filemtime', ($files = glob("*.*"))), SORT_DESC, $files);
-
-//$files = scandir("./", SCANDIR_SORT_DESCENDING);
-//^^^ ของเก่าเรียงด้วยชื่อไฟล์ มีปัญหากับชื่อแบบวัน-เดือน-ปี
-//มันจะเรียงของเดือนมกราคมขึ้นก่อนเดือนกุมภาพันธ์ เช่น 31012020 ขึ้นก่อน 01022020 ทำให้มันไม่ส่งรูปใหม่เมื่อขึ้นเดือนใหม่
-
-//ไฟล์ที่ให้ข้ามไป ไม่ต้องเอาไปรวมในตัวแปร
-unset($files[array_search('checkandsend.php', $files, true)]);
-unset($files[array_search('linenoti.jpg', $files, true)]);
-unset($files[array_search('array.txt', $files, true)]);
-
-//print_r ($files); //ถ้ามันส่งไฟล์ไปไม่ถูกต้อง ให้ลองเปิดบรรทัดนี้ เพื่อ Print ดูค่าลำดับของตัวแปร แล้วเอาไปแก้ตัวเลขใน [] บรรทัดด้างล่าง
-$newest_file = $files[3];
-
-//ดึงตัวแปร ไฟล์ล่าสุด จาก txt มาแสดงผลเทียบกัน 
-$latest_file = file_get_contents('./array.txt', true);
-echo "Last - $latest_file"; 
-echo "<br>";
-echo "Now - $newest_file"; 
-echo "<br>";
-
-//แสดงผลว่าไฟล์ล่าสุดนั้น เป็นไฟล์เมื่อ วัน เวลา เมื่อใด
-$file_date = "./".$newest_file;
-if (file_exists($file_date)) {
-    echo "<br>";
-    echo "$file_date - was last modified - " . date ("d F Y - H:i:s.", filemtime($file_date));
-    echo "<br>";
-    echo "<br>";
-}
-
-//ถ้ายังเป็นไฟล็นเดิมอยู่ก็ให้แสดงผลว่ายังเป็นไฟล์เดิม และจบการทำงาน
-if($newest_file == $latest_file) {
-            exit('Still same file.');
-}
 
 //ระบบเดือนภาษาไทยตัวย่อ
 function DateThai($strDate)
@@ -55,58 +37,80 @@ function DateThai($strDate)
 		return "$strDay $strMonthThai $strYear เวลา $strHour:$strMinute:$strSeconds";
 	}
 
-//สำหรับส่งวันเวลาเข้าไปใน Line
-$datetime = date("Y-n-j H:i:s", filemtime($file_date));
-$strDate = $datetime;
+//ย้ายตำแหน่งไปยังโฟลเดอร์เก็บรูปที่กำหนดไว้ แล้วทำการจัดเรียงไฟล์ที่สร้างหรือเปลี่ยนแปลงล่าสุดขึ้นมาก่อน
+chdir($Imagedir);
+array_multisort(array_map('filemtime', ($files = glob("*.*"))), SORT_DESC, $files);
+
+//เลือกไฟล์อันดับแรกสุด หรือก็คือไฟล์ล่าสุด
+$newest_file = $files[0];
+
+//ย้ายตำแหน่งกลับขึ้นไปที่ไฟล์ php อยู่
+chdir ('../');
+
+//ดึงตัวแปร ไฟล์ล่าสุด จาก txt มาแสดงผลเทียบกับไฟล์ล่าสุด
+$latest_file = file_get_contents('./array.txt', true);
+
+//แสดงผลเปรียบเทียบไฟล์ว่าเปลี่ยนหรือแปลงหรือคงเดิม
+echo "========== เปรียบเทียบไฟล์ =========="; 
+echo "<br>";
+echo "ที่ผ่านมา - $latest_file"; 
+echo "<br>";
+echo "ปัจจุบัน - $newest_file"; 
+echo "<br>";
+echo "================================="; 
+
+//ตำแหน่งของไฟล์ล่าสุด
+$current_file = $Imagedir.$newest_file;
+
+//ตรวจสอบว่าไฟล์ถูกสร้างหรือแก้ไขล่าสุดเมื่อใด
+$filedatetime = date("Y-n-j H:i:s", filemtime($current_file));
+$strDate = DateThai($filedatetime);
+
+//แสดงผลวันเวลาของไฟล์
+if (file_exists($current_file)) {
+    echo "<br>";
+    echo "$newest_file - ถูกสร้างหรือเปลี่ยนแปลงเมื่อ - $strDate";
+    echo "<br>";
+    echo "<br>";
+}
+
+//ถ้ายังเป็นไฟล์เดิมอยู่ก็ให้แสดงผลว่ายังเป็นไฟล์เดิม และจบการทำงาน
+if($newest_file == $latest_file) {
+            exit('*** ยังคงเป็นไฟล์เดิมอยู่ ***');
+}
         
-//เก็บตัวแปรไฟล์ล่าสุดลง txt
+//ถ้าเป็นไฟล์ใหม่ ก็เก็บตัวแปรไฟล์ลง txt
 file_put_contents('./array.txt', $newest_file);
 
-$base_url = "http://localhost/test/"; //url โฟลเดอร์ที่เก็บไฟล์รูป
+//หน่วงเวลา เผื่อรูปเพิ่งถูกเขียนลง Disk เวลาส่งไปภาพจะได้ไม่ดำ
+sleep(3); 
 
-//เอา Base Url กับชื่อไฟล์มารวมกัน เพื่อไว้ดึงไฟล์
-$photo="$base_url$newest_file";
+//แสดงผลว่าเริ่มกระบวนการส่งไฟล์แล้ว
+print_r("=== ทำการส่งไฟล์ {$newest_file} ===");
 
-sleep(3); //หน่วงเวลา เผื่อรูปเพิ่งถูกเขียนลง Disk เวลาส่งไปภาพจะได้ไม่ดำ
+//เอาตัวแปรมารวมกัน เพื่อทำเป็น URL ไว้ดึงไฟล์รูป
+$imgurl="$base_url$Imagedir$newest_file";
 
-print_r("sending {$photo}");
-
-//Url ของไฟล์รูป
-$url = $photo;
 //Download ไฟล์จาก url
-$downloadedFileContents = file_get_contents($url);
+$downloadedFileContents = file_get_contents($imgurl);
+
 //ตรวจสอบว่า Download ได้สำเร็จไหม
 if($downloadedFileContents === false){
-    throw new Exception('Failed to download file at: ' . $url);
+    throw new Exception('Failed to download file at: ' . $imgurl);
 }
-//ชื่อไฟล์ที่ต้องการเก็บ
+
+//ชื่อไฟล์ที่ Save
 $fileName = 'linenoti.jpg';
+
 //เซฟไฟล์
 $save = file_put_contents($fileName, $downloadedFileContents);
+
 //ตรวจสอบว่า Save สำเร็จไหม
 if($save === false){
     throw new Exception('Failed to save file to: ' , $fileName);
 }
 
-/*-------------line noti----------------------*/
-	$line_api = 'https://notify-api.line.me/api/notify';
-	$access_token = 'Line Notify Access Token'; //เอา Line Notify Access Token มาใส่ในนี้
-    
-	$message = 'ข้อความที่จะส่งไปพร้อมกับรูปภาพ '.DateThai($strDate); //ข้อความที่จะส่งไปพร้อมกับรูปภาพ + วัน เวลา ของไฟล์รูป
-	$imageFile = new CurlFile('D:\xampp\htdocs\test\linenoti.jpg', 'image/jpg', 'linetemp.jpg'); //Windows Path ของไฟล์ linenoti.jpg
-
-    $message_data = array(
-	'message' => $message,
-	'imageFile' => $imageFile
-    );
-
-    $result = send_notify_message($line_api, $access_token, $message_data);
-
-	echo '<pre>';
-    print_r($result);
-    echo '</pre>';
-/*-------------line noti----------------------*/
-
+/*---------------------- ระบบส่งข้อความและรูป Line Notify ----------------------*/
 function send_notify_message($line_api, $access_token, $message_data){
    $headers = array('Method: POST', 'Content-type: multipart/form-data', 'Authorization: Bearer '.$access_token );
 
@@ -129,5 +133,25 @@ function send_notify_message($line_api, $access_token, $message_data){
    curl_close($ch);
 return $return_array;
 }
+/*---------------------- ระบบส่งข้อความและรูป Line Notify ----------------------*/
+
+/*---------------------- เรียกตัวแปรกับระบบส่งข้อความและรูป Line Notify ----------------------*/
+$line_api = 'https://notify-api.line.me/api/notify';
+$access_token = $linenotifytoken;
+    
+$message = "$strMessage$strDate";
+$imageFile = new CurlFile($win_dir.'\linenoti.jpg', 'image/jpg', 'linetemp.jpg');
+
+$message_data = array(
+	'message' => $message,
+	'imageFile' => $imageFile
+);
+
+$result = send_notify_message($line_api, $access_token, $message_data);
+
+echo '<pre>';
+print_r($result);
+echo '</pre>';
+/*---------------------- เรียกตัวแปรกับระบบส่งข้อความและรูป Line Notify ----------------------*/
 
 ?>
